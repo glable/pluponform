@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 4.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mota.dao.BillDao">
+    <select id="getBillListWithPage" parameterType="com.mota.bean.YyTzHd" resultType="com.mota.bean.YyTzHd">
+        SELECT * FROM yy_tz_hd where 1=1
+        <if test="caller != null and caller !=''">
+            and caller = #{caller}
+        </if>
+        <if test="called != null and called !=''">
+            and called = #{called}
+        </if>
+        <if test="appid != null and appid !=''">
+            and appid = #{appid}
+        </if>
+        <if test="calltype != null and calltype !=''">
+            and calltype = #{calltype}
+        </if>
+        <if test="startTime != null and startTime !=''">
+            and tjrq &gt;= #{startTime}
+        </if>
+        <if test="endTime != null and endTime !=''">
+            and tjrq &lt;= #{endTime}
+        </if>
+        <if test="durationConditon != null and durationConditon !=''">
+            and duration ${durationConditon}
+        </if>
+        order by calltime
+    </select>
+    <select id="exportData" parameterType="com.mota.bean.YyTzHd" resultType="com.mota.bean.YyTzHd">
+        SELECT * FROM yy_tz_hd where 1=1
+        <if test="caller != null and caller !='' and caller !='null'">
+            and caller = #{caller}
+        </if>
+        <if test="called != null and called !='' and called !='null'">
+            and called = #{called}
+        </if>
+        <if test="appid != null and appid !='' and appid !=''">
+            and appid = #{appid}
+        </if>
+        <if test="calltype != null and calltype !='' and calltype !='null'">
+            and calltype = #{calltype}
+        </if>
+        <if test="startTime != null and startTime !='' and startTime !='null'">
+            and tjrq &gt;= #{startTime}
+        </if>
+        <if test="endTime != null and endTime !='' and endTime !='null'">
+            and tjrq &lt;= #{endTime}
+        </if>
+        <if test="durationConditon != null and durationConditon !='' and durationConditon !='null'">
+            and duration ${durationConditon}
+        </if>
+        order by calltime
+    </select>
+    <select id="dayReport" parameterType="java.lang.String" resultType="com.mota.bean.YyReport">
+        SELECT count(1) zsl,count(1) ydl,sum(cost) zfy,date_format(date_add(now(), interval -1 day),'%Y%m%d') tjrq,
+        #{calltype} calltype,'1' tjlx
+        FROM yy_tz_hd where
+        tjrq = date_format(date_add(now(), interval -1 day),'%Y%m%d')
+        and calltype = #{calltype}
+    </select>
+    <insert id="insertReport" parameterType="com.mota.bean.YyReport">
+        insert INTO yy_report (
+            zsl,
+            ydl,
+            zfy,
+            tjrq,
+            calltype,
+            tjlx
+        )values(${zsl},${ydl},${zfy},#{tjrq},#{calltype},#{tjlx})
+    </insert>
+    <select id="getReportListWithPage" parameterType="com.mota.bean.YyReport" resultType="com.mota.bean.YyReport">
+        SELECT * FROM yy_report where 1=1
+        <if test="calltype != null and calltype !=''">
+            and calltype = #{calltype}
+        </if>
+        <if test="startTime != null and startTime !=''">
+            and tjrq &gt;= #{startTime}
+        </if>
+        <if test="endTime != null and endTime !=''">
+            and tjrq &lt;= #{endTime}
+        </if>
+        <if test="tjlx != null and tjlx !=''">
+            and tjlx = #{tjlx}
+        </if>
+        order by tjrq desc
+    </select>
+    <select id="exportReport" parameterType="com.mota.bean.YyReport" resultType="com.mota.bean.YyReport">
+        SELECT * FROM yy_report where 1=1
+        <if test="calltype != null and calltype !='' and calltype !='null'">
+            and calltype = #{calltype}
+        </if>
+        <if test="startTime != null and startTime !='' and startTime !='null'">
+            and tjrq &gt;= #{startTime}
+        </if>
+        <if test="endTime != null and endTime !='' and endTime !='null'">
+            and tjrq &lt;= #{endTime}
+        </if>
+        <if test="tjlx != null and tjlx !='' and tjlx !='null'">
+            and tjlx = #{tjlx}
+        </if>
+        order by tjrq desc
+    </select>
+</mapper>
