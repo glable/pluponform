@@ -25,7 +25,7 @@
         <if test="durationConditon != null and durationConditon !=''">
             and duration ${durationConditon}
         </if>
-        order by calltime
+        order by calltime desc
     </select>
     <select id="exportData" parameterType="com.mota.bean.YyTzHd" resultType="com.mota.bean.YyTzHd">
         SELECT * FROM yy_tz_hd where 1=1
@@ -50,7 +50,7 @@
         <if test="durationConditon != null and durationConditon !='' and durationConditon !='null'">
             and duration ${durationConditon}
         </if>
-        order by calltime
+        order by calltime desc
     </select>
     <select id="dayReport" parameterType="java.lang.String" resultType="com.mota.bean.YyReport">
         SELECT count(1) zsl,count(1) ydl,sum(cost) zfy,date_format(date_add(now(), interval -1 day),'%Y%m%d') tjrq,

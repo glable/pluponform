@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 4.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mota.dao.UserDao">
+    <select id="userInfo" parameterType="java.lang.String" resultType="com.mota.bean.User">
+        SELECT *
+        FROM yy_user where
+        username = #{username}
+    </select>
+    <select id="queryList" parameterType="com.mota.bean.User" resultType="com.mota.bean.User">
+        SELECT *
+        FROM yy_user  where 1=1
+        <if test="username != null and username !='' and username !='null'">
+            and username like CONCAT('%',#{username},'%')
+        </if>
+    </select>
+    <insert id="saveUser" parameterType="com.mota.bean.User">
+        insert into yy_user(username,yzmid,hdid,password) values(#{username},#{yzmid},#{hdid},#{password})
+    </insert>
+    <update id="updateUser" parameterType="com.mota.bean.User">
+        update yy_user
+        set
+        <if test="password != null and password !='' and password !='null'">
+             password = #{password},
+        </if>
+        <if test="yzmid != null and yzmid !='' and yzmid !='null'">
+            yzmid = #{yzmid},
+        </if>
+        <if test="hdid != null and hdid !='' and hdid !='null'">
+            hdid = #{hdid},
+        </if>
+        username = #{username}
+        where username = #{username}
+    </update>
+    <delete id="deleteUser" parameterType="com.mota.bean.User">
+        delete from yy_user
+        where username = #{username}
+    </delete>
+</mapper>

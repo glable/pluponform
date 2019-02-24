@@ -1,16 +1,19 @@
 package com.mota.controller;
 
+import com.mota.bean.User;
 import com.mota.bean.YyReport;
 import com.mota.bean.YyTzHd;
 import com.mota.bean.common.PageEntity;
 import com.mota.sdk.utils.DateUtil;
 import com.mota.service.BillService;
+import com.mota.service.UserService;
 import com.mota.util.ExportUtil;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,10 +28,20 @@ public class BillController {
     @Autowired
     BillService billService;
 
+    @Autowired
+    UserService userService;
+
     private Logger logger = Logger.getLogger(getClass());
 
     @RequestMapping("/queryList")
-    public Object queryList(YyTzHd yyTzHd) {
+    public Object queryList(YyTzHd yyTzHd, HttpSession session) {
+        String username = session.getAttribute("username").toString();
+        User user = userService.userInfo(username);
+        if("13".equals(yyTzHd.getCalltype())){
+            yyTzHd.setAppid(user.getYzmid());
+        }else if("14".equals(yyTzHd.getCalltype())){
+            yyTzHd.setAppid(user.getHdid());
+        }
         List<YyTzHd> yyTzHds = billService.getBillListWithPage(yyTzHd);
         Map<String, Object> result = new HashMap();
         result.put("code", 20000l);
@@ -37,7 +50,14 @@ public class BillController {
     }
 
     @RequestMapping("/reportList")
-    public Object reportList(YyReport yyReport) {
+    public Object reportList(YyReport yyReport, HttpSession session) {
+        String username = session.getAttribute("username").toString();
+        User user = userService.userInfo(username);
+        if("13".equals(yyReport.getCalltype())){
+            yyReport.setAppid(user.getYzmid());
+        }else if("14".equals(yyReport.getCalltype())){
+            yyReport.setAppid(user.getHdid());
+        }
         List<YyReport> yyReports = billService.getReportListWithPage(yyReport);
         Map<String, Object> result = new HashMap();
         result.put("code", 20000l);
@@ -46,8 +66,14 @@ public class BillController {
     }
 
     @RequestMapping(value = "/excel", method = RequestMethod.GET)
-    public Object excel(YyTzHd yyTzHd, HttpServletResponse response) throws Exception {
-
+    public Object excel(YyTzHd yyTzHd, HttpSession session, HttpServletResponse response) throws Exception {
+        String username = session.getAttribute("username").toString();
+        User user = userService.userInfo(username);
+        if("13".equals(yyTzHd.getCalltype())){
+            yyTzHd.setAppid(user.getYzmid());
+        }else if("14".equals(yyTzHd.getCalltype())){
+            yyTzHd.setAppid(user.getHdid());
+        }
         // 查询到要导出的信息
         List<YyTzHd> billList = billService.exportData(yyTzHd);
         if (billList.size() == 0) {
@@ -89,8 +115,14 @@ public class BillController {
     }
 
     @RequestMapping(value = "/report", method = RequestMethod.GET)
-    public Object report(YyReport yyReport, HttpServletResponse response) throws Exception {
-
+    public Object report(YyReport yyReport, HttpSession session, HttpServletResponse response) throws Exception {
+        String username = session.getAttribute("username").toString();
+        User user = userService.userInfo(username);
+        if("13".equals(yyReport.getCalltype())){
+            yyReport.setAppid(user.getYzmid());
+        }else if("14".equals(yyReport.getCalltype())){
+            yyReport.setAppid(user.getHdid());
+        }
         // 查询到要导出的信息
         List<YyReport> reportList = billService.exportReport(yyReport);
         if (reportList.size() == 0) {
